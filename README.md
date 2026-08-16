@@ -73,5 +73,6 @@ see "Third-party components" above.
 
 ## Disclaimer
 
-Everything here is specific to the Steam Deck LCD and was tested on that hardware only. Use at your own
-risk. Paths use `/home/deck`, adjust them to your username before running anything.
+Written for and tested only on the Steam Deck LCD, so it may not apply to the OLED model or other
+hardware. Use it at your own risk, and change the `/home/deck` paths to your own username before you
+run anything.
