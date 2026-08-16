@@ -1,0 +1,11 @@
+[Unit]
+Description=Deck Display Wake (Touch/Voice)
+
+[Service]
+ExecStartPre=-/sbin/modprobe uinput
+ExecStart=/usr/bin/python3 /usr/local/bin/deck-waked.py
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,25 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Secrets and local config (keep the .example files)
+.env
+*.env
+!*.env.example
+
+# Virtual envs and models (large, machine-specific)
+venv/
+.venv/
+*.onnx
+*.onnx.json
+models/
+
+# Runtime artifacts
+*.log
+*.wav
+*.pid
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,8 @@
+# Force LF for everything text: shell scripts and unit files must stay LF or they
+# break on Linux (a CRLF shebang line fails to execute).
+* text=auto eol=lf
+
+# Binaries (none tracked today, but future-proof)
+*.onnx binary
+*.png binary
+*.wav binary
