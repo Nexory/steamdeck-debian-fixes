@@ -1,4 +1,4 @@
-# steamdeck-debian-fixes
+# Steam Deck LCD on Debian: touchscreen, sound, display, and voice fixes
 
 Fixes and notes from turning a Steam Deck LCD into an always-on Debian 13 home server. The Deck runs
 Home Assistant in Docker with a Matter bridge, so Alexa can control everything locally without a vendor
