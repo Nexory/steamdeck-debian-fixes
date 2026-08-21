@@ -151,6 +151,12 @@ Model choice is the single biggest lever on how usable this feels:
 
 The turbo German build is set through the systemd drop-in, see below.
 
+Those numbers are all on the CPU and only hold while the CPU is otherwise idle.
+On a Deck that is also a busy server they degrade badly under load: a clip that
+takes one to two seconds idle took nine to sixteen while a heavy job ran. For a
+load-independent path that runs whisper on the Deck iGPU over Vulkan and stays
+around two to three seconds regardless, see [whisper-igpu.md](./whisper-igpu.md).
+
 Three settings besides the model:
 
 - **Force the language** with `language="de"`. Auto detection on short, noisy
@@ -320,6 +326,7 @@ shell.
 | `voiced.service.d/model.conf` | drop-in that selects the whisper model |
 | `assistant.example.md` | generic example persona, copy to `~/voice/assistant.md` |
 | `voice.env.example` | every setting with a comment, copy to `~/voice/voice.env` |
+| `whisper-igpu.md` | optional: run STT on the Deck iGPU over Vulkan, load-independent latency |
 
 ---
 
