@@ -1,0 +1,11 @@
+[Unit]
+Description=Steam Deck battery charge limit 80 percent
+After=multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/bash -c 'modprobe steamdeck; modprobe steamdeck_hwmon; sleep 1; for h in /sys/class/hwmon/hwmon*; do [ "$(cat $h/name 2>/dev/null)" = steamdeck_hwmon ] && echo 80 > $h/max_battery_charge_level; done'
+
+[Install]
+WantedBy=multi-user.target
