@@ -34,7 +34,7 @@ problems. The DKMS module alone is all you need.
    and an initramfs hook loads it at boot; kernel updates rebuild it automatically.
 3. Loads the module and verifies `steamdeck_hwmon` appeared with `max_battery_charge_level`. It aborts
    before changing anything permanent if the driver does not bind.
-4. Sets a **battery charge limit of 80%** and installs `steamdeck-chargelimit.service` to re-apply it on
+4. Sets a **battery charge limit of 80%** (`LIMIT` at the top of `install.sh`) and installs `steamdeck-chargelimit.service` to re-apply it on
    every boot (the value resets to unlimited when the module loads).
 5. Installs `steamdeck-fancurve.service`, a small daemon that drives `fan1_target` on a temperature
    curve: near-silent (2000 RPM) below 50C, ramping linearly to full (~4500) at 80C.
