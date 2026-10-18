@@ -34,10 +34,10 @@ problems. The DKMS module alone is all you need.
    and an initramfs hook loads it at boot; kernel updates rebuild it automatically.
 3. Loads the module and verifies `steamdeck_hwmon` appeared with `max_battery_charge_level`. It aborts
    before changing anything permanent if the driver does not bind.
-4. Sets a **battery charge limit of 80%** (`LIMIT` at the top of `install.sh`) and installs `steamdeck-chargelimit.service` to re-apply it on
+4. Sets a **battery charge limit of 70%** (`LIMIT` at the top of `install.sh`) and installs `steamdeck-chargelimit.service` to re-apply it on
    every boot (the value resets to unlimited when the module loads).
 5. Installs `steamdeck-fancurve.service`, a small daemon that drives `fan1_target` on a temperature
-   curve: near-silent (2000 RPM) below 50C, ramping linearly to full (~4500) at 80C.
+   curve: near-silent (2000 RPM) below 50C, ramping linearly (100 RPM per degree) to full (~4500) at 75C.
 
 Change the limit or the curve by editing the two files before running, or edit the installed copies
 (`/etc/systemd/system/steamdeck-chargelimit.service`, `/usr/local/bin/steamdeck-fancurve.sh`) and
@@ -54,14 +54,22 @@ Change the limit or the curve by editing the two files before running, or edit t
 - The charge limit lives in `max_battery_charge_level` and defaults back to unlimited each time the
   module loads, which is why it needs a boot-time service, not a one-off write. If the pack is already
   above the new limit it simply stops charging and drifts down to it.
+- The boot service must not end on its search loop. A `for h in hwmon*; do [ name = steamdeck_hwmon ] &&
+  echo ...; done` exits with the test result of the LAST hwmon entry, and the hwmon numbers change from
+  boot to boot, so the unit reported `failed` although the limit was set. It now ends with a `grep` for
+  the value, which is the real result.
+- Moving the top of the fan curve means moving the divisor with it (`2500 / 25` for a ramp from 50C to
+  75C). Otherwise the target jumps by several hundred RPM at the cap.
 
 ## Verifying
 
 - `cat /sys/class/hwmon/hwmon*/name` should list `steamdeck_hwmon`.
-- Under that hwmon: `fan1_input` (RPM), `fan1_target`, `max_battery_charge_level` (should read 80).
+- Under that hwmon: `fan1_input` (RPM), `fan1_target`, `max_battery_charge_level` (should read 70).
 - `dkms status` should show the module installed for your running kernel.
-- Under load the fan ramps with temperature; a CPU-heavy task on the LCD settles around 75C with the fan
-  still short of its maximum.
+- Under load the fan ramps with temperature and reaches its maximum at 75C. The daemon sleeps 5 s per
+  round, so `fan1_target` belongs to the temperature of up to 5 s earlier; compared against the current
+  temperature a correct curve looks off by a few hundred RPM. At or below 50C every curve reads 2000, so
+  an idle check cannot tell two curves apart.
 
 Credit: the driver is Valve's, packaged for DKMS by
 [firlin123/steamdeck-dkms](https://github.com/firlin123/steamdeck-dkms).

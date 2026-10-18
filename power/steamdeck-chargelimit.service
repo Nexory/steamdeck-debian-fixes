@@ -1,11 +1,13 @@
 [Unit]
-Description=Steam Deck battery charge limit 80 percent
+Description=Steam Deck battery charge limit 70 percent
 After=multi-user.target
 
 [Service]
 Type=oneshot
 RemainAfterExit=yes
-ExecStart=/usr/bin/bash -c 'modprobe steamdeck; modprobe steamdeck_hwmon; sleep 1; for h in /sys/class/hwmon/hwmon*; do [ "$(cat $h/name 2>/dev/null)" = steamdeck_hwmon ] && echo 80 > $h/max_battery_charge_level; done'
+# The for loop alone ends with the test result of the LAST hwmon entry, and hwmon numbers change between
+# boots: the unit reported failed although the limit was set. The final grep is the real result.
+ExecStart=/usr/bin/bash -c 'modprobe steamdeck; modprobe steamdeck_hwmon; sleep 1; for h in /sys/class/hwmon/hwmon*; do [ "$(cat $h/name 2>/dev/null)" = steamdeck_hwmon ] && echo 70 > $h/max_battery_charge_level; done; grep -qx 70 /sys/class/hwmon/hwmon*/max_battery_charge_level'
 
 [Install]
 WantedBy=multi-user.target

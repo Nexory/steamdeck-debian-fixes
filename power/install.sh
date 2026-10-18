@@ -1,13 +1,13 @@
 #!/bin/bash
 # Fan control + battery charge limit for a Steam Deck LCD on Debian.
 # Builds the steamdeck DKMS module, then installs two systemd services:
-#   steamdeck-chargelimit.service  - re-applies the charge cap (LIMIT, default 80%) on every boot
+#   steamdeck-chargelimit.service  - re-applies the charge cap (LIMIT, default 70%) on every boot
 #   steamdeck-fancurve.service     - drives fan1_target on a temperature curve
 # Run with sudo. Self-checking: aborts before anything permanent if the driver does not bind.
 # See power/README.md.
 set -e
 
-LIMIT=80
+LIMIT=70
 HERE="$(cd "$(dirname "$0")" && pwd)"
 BUILD=/tmp/steamdeck-dkms-build
 
@@ -42,7 +42,7 @@ echo "  hwmon: $HW  fan=$(cat "$HW/fan1_input") RPM  limit=$(cat "$HW/max_batter
 
 echo "### 5/6 battery charge limit ${LIMIT}% ###"
 echo "$LIMIT" > "$HW/max_battery_charge_level"
-sed "s/echo 80 >/echo $LIMIT >/; s/80 percent/$LIMIT percent/" "$HERE/steamdeck-chargelimit.service" > /etc/systemd/system/steamdeck-chargelimit.service
+sed "s/echo 70 >/echo $LIMIT >/; s/grep -qx 70 /grep -qx $LIMIT /; s/70 percent/$LIMIT percent/" "$HERE/steamdeck-chargelimit.service" > /etc/systemd/system/steamdeck-chargelimit.service
 chmod 644 /etc/systemd/system/steamdeck-chargelimit.service
 
 echo "### 6/6 fan curve service ###"
